@@ -1,0 +1,10 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      # target: builder
+    container_name: grounding-dino
+    ports:
+      - "9000:8080" # host port : container port
+    # restart: "no"

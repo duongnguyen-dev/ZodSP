@@ -1,0 +1,4 @@
+input_width: 1200
+input_height: 800
+box_threshold: 0.3
+text_threshold: 0.25
