@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Pod
+metadata: 
+  name: grounding-dino-pod
+  namespace: example
+spec:
+  containers:
+    - name: container1
+      image: duongnguyen2911/serving_grounding_dino-api:0.0.1
+      resources:
+        limits: # Maximum amount of a resource to be used by a container.
+          memory: 1Gi
+          cpu: 1
+        requests: # Minimum guaranteed amount of a resource that is reserved for a container.
+          memory: 1Gi
+          cpu: 500m 
