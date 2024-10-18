@@ -9,3 +9,13 @@
   - Docker
   - K8s
   - FastAPI
+
+- Docker: 
+  - To push the image into docker hub, using:
+    docker tag [IMAGE ID] [username]:[tag]
+    docker push [username]:[tag]
+    
+- Using Kompose to translate docker-compose to kubernetes resources 
+- Installation:
+  https://kubernetes.io/docs/tasks/configure-pod-container/translate-compose-kubernetes/#install-kompose
+

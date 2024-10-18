@@ -11,6 +11,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File, Depends, status, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from services.grounding_dino import ObjectDetectionServices
+from viewmodel.object_detection_view_model import ObjectDetectionViewModel
 
 class ResponseModel(BaseModel):
     response_data: list
@@ -26,7 +27,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 security = HTTPBasic()
 
-@app.post("/ObjectDetection/detectObject", response_model=list[list])
+@app.post("/ObjectDetection/detectObject", response_model=list[ObjectDetectionViewModel])
 async def detectObject(prompt: str, credentials: Annotated[HTTPBasicCredentials, Depends(security)], data: UploadFile = File(...)): 
     if not (secrets.compare_digest(credentials.username.encode("utf8"), b"duongng2911") and secrets.compare_digest(credentials.password.encode("utf8"), b"hehehihi0808")):
         logger.error("Incorrect email or password")

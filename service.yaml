@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: gd
+  labels:
+    app: grounding-dino-pod # Label assign to this service. Service labels should the same with pod object label
+  namespace: example
+spec:
+  selector:
+    app: grounding-dino-pod # Select pods that have this label
+  ports:
+    - port: 30000 # service port
+      protocol: TCP
+      targetPort: 8080 # container port
+  type: ClusterIP
