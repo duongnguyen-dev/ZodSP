@@ -18,6 +18,7 @@ COPY ./services /app/services
 COPY ./basemodel /app/basemodel
 COPY ./utils /app/utils
 COPY ./scripts /app/scripts
+COPY ./viewmodel /app/viewmodel
 COPY ./models /app/models
 
 # Declaring which port the container might listen on runtime 
