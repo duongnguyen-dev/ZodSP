@@ -4,7 +4,7 @@ metadata:
   name: grounding-dino-deployment
   namespace: example
 spec: 
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: grounding-dino-pod # The deployment manage all pods with labels matching grounding-dino-pod
