@@ -1,4 +1,4 @@
-pipepline {
+pipeline {
     agent any // A node that execute the pipeline
 
     options{
