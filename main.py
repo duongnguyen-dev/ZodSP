@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-import uvicorn
 import secrets
 
 from time import time
@@ -11,7 +10,7 @@ from pydantic import BaseModel
 from fastapi import FastAPI, UploadFile, File, Depends, status, HTTPException
 from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from services.grounding_dino import ObjectDetectionServices
-from viewmodel.object_detection_view_model import ObjectDetectionViewModel
+from model.object_detection_view_model import ObjectDetectionViewModel
 
 class ResponseModel(BaseModel):
     response_data: list
