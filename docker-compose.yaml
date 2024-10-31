@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
       # target: builder
     container_name: serving-grounding-dino
+    platform: linux/amd64
     ports:
       - "3001:3000" # host port : api port
     # restart: "no"

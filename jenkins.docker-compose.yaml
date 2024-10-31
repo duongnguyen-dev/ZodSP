@@ -6,7 +6,7 @@ services:
       dockerfile: jenkins.Dockerfile
       # target: builder
     container_name: jenkins
-
+    platform: linux/amd64
     # This is useful for ensuring that Jenkins remains running unless you decide to stop it.
     restart: unless-stopped
     privileged: true # mandatory
