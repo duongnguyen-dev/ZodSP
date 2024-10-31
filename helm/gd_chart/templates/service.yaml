@@ -9,7 +9,7 @@ spec:
   selector:
     app: {{ .Release.Name }}
   ports:
-    - port: 8080
+    - port: 3002
       protocol: TCP
-      targetPort: 8080
-  type: NodePort
+      targetPort: 3000
+  type: LoadBalancer 

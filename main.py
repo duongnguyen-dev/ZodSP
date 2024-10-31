@@ -28,13 +28,13 @@ security = HTTPBasic()
 
 @app.post("/ObjectDetection/detectObject", response_model=list[ObjectDetectionViewModel])
 async def detectObject(prompt: str, credentials: Annotated[HTTPBasicCredentials, Depends(security)], data: UploadFile = File(...)): 
-    if not (secrets.compare_digest(credentials.username.encode("utf8"), b"duongng2911") and secrets.compare_digest(credentials.password.encode("utf8"), b"hehehihi0808")):
-        logger.error("Incorrect email or password")
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZEDm,
-            detail="Incorrect email or password",
-            headers={"WWW-Authenticate": "Basic"}
-        )
+    # if not (secrets.compare_digest(credentials.username.encode("utf8"), b"duongng2911") and secrets.compare_digest(credentials.password.encode("utf8"), b"hehehihi0808")):
+    #     logger.error("Incorrect email or password")
+    #     raise HTTPException(
+    #         status_code=status.HTTP_401_UNAUTHORIZEDm,
+    #         detail="Incorrect email or password",
+    #         headers={"WWW-Authenticate": "Basic"}
+    #     )
 
     start_time = time()
     try:

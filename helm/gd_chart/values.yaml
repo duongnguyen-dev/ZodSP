@@ -4,7 +4,5 @@
 
 image:
   repository: duongnguyen2911/serving_grounding_dino-api
-  # This sets the pull policy for images.
   pullPolicy: Always
-  # Overrides the image tag whose default is the chart appVersion.
   tag: "latest"

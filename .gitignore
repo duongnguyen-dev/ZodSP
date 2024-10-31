@@ -1,2 +1,4 @@
 models
 .env
+ansible/secrets/*.json
+ansible/inventory
