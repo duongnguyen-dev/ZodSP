@@ -14,17 +14,17 @@ pipeline {
     }
 
     stages {
-        stage('Test') {
-            agent {
-                docker {
-                    image 'python:3.10' 
-                }
-            }
-            steps {
-                echo 'Testing model correctness..'
-                sh 'pip install -r requirements.txt'
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker {
+        //             image 'python:3.10' 
+        //         }
+        //     }
+        //     steps {
+        //         echo 'Testing model correctness..'
+        //         sh 'pip install -r requirements.txt'
+        //     }
+        // }
         stage('Build') {
             steps {
                 script {
@@ -39,9 +39,20 @@ pipeline {
             }
         }
         stage('Deploy') {
+            agent {
+                kubernetes {
+                    containerTemplate {
+                        name "serving_grounding_dino"
+                        image 'duongnguyen2911/serving_grounding_dino-api:latest'
+                        alwaysPullImage true // Always pull image in case of using the same tag
+                    }
+                }
+            }
             steps {
                 echo 'Deploying models..'
-                echo 'Running a script to trigger pull and start a docker container'
+                container('serving_grounding_dino') {
+                    sh("helm upgrade --install serving_grounding_dino ./helm/gd_chart --namespace model-serving")
+                }
             }
         }
     }
