@@ -43,7 +43,7 @@ pipeline {
                 kubernetes {
                     containerTemplate {
                         name "helm"
-                        image 'duongnguyen2911/serving_grounding_dino-api:latest'
+                        image 'duongnguyen2911/serving_grounding_dino-jenkins:0.0.2'
                         alwaysPullImage true // Always pull image in case of using the same tag
                     }
                 }
