@@ -51,7 +51,7 @@ pipeline {
             steps {
                 echo 'Deploying models..'
                 container('helm') {
-                    sh("helm upgrade --install serving_grounding_dino ./helm/gd_chart --namespace model-serving")
+                    sh("helm upgrade --install sgd ./helm/gd_chart --namespace model-serving")
                 }
             }
         }
