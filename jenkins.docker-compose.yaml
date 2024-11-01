@@ -1,6 +1,7 @@
 version: '3.8'
 services:
   jenkins:
+    image: duongnguyen2911/serving_grounding_dino-jenkins:0.0.2
     build:
       context: .
       dockerfile: jenkins.Dockerfile
