@@ -42,7 +42,7 @@ pipeline {
             agent {
                 kubernetes {
                     containerTemplate {
-                        name "serving_grounding_dino"
+                        name "helm"
                         image 'duongnguyen2911/serving_grounding_dino-api:latest'
                         alwaysPullImage true // Always pull image in case of using the same tag
                     }
@@ -50,7 +50,7 @@ pipeline {
             }
             steps {
                 echo 'Deploying models..'
-                container('serving_grounding_dino') {
+                container('helm') {
                     sh("helm upgrade --install serving_grounding_dino ./helm/gd_chart --namespace model-serving")
                 }
             }
