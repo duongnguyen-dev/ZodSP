@@ -8,9 +8,9 @@ variable "region" {
   default = "asia-southeast1" # singapore
 }
 
-variable "instance_name" {
-  description = "Name of the instance"
-  default = "serving-grounding-dino"
+variable "k8s" {
+  description = "GKE for zero shot object detection"
+  default     = "zero-shot-object-detection"
 }
 
 variable "machine_type" {
@@ -20,20 +20,20 @@ variable "machine_type" {
 
 variable "zone" {
   description = "Zone for the instance"
-  default = "asia-southeast1-a"
+  default = "asia-southeast1-b"
 }
 
-variable "boot_disk_image" {
-  description = "Boot disk image for the instance"
-  default = "ubuntu-os-cloud/ubuntu-2204-lts"
-}
+# variable "boot_disk_image" {
+#   description = "Boot disk image for the instance"
+#   default = "ubuntu-os-cloud/ubuntu-2204-lts"
+# }
 
 variable "boot_disk_size" {
   description = "Boot disk size for the instance"
-  default = 50
+  default = 100
 }
 
-variable "firewall_name" {
-  description = "Name of the firewall rule"
-  default     = "serving-grounding-dino-firewall" 
-}
+# variable "firewall_name" {
+#   description = "Name of the firewall rule"
+#   default     = "serving-grounding-dino-firewall" 
+# }

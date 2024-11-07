@@ -31,5 +31,5 @@ RUN ls -l /app/models
 
 # FastAPI port = Container port
 # The best way to write docker file is to use an Entrypoint like this
-ENTRYPOINT [ "uvicorn" ]
+ENTRYPOINT [ "uvicorn"]
 CMD [ "main:app" , "--host", "0.0.0.0", "--port", "3000", "--reload"]

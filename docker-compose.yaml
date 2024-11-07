@@ -1,4 +1,5 @@
 version: '3.8'
+
 services:
   api:
     build:
@@ -9,4 +10,19 @@ services:
     platform: linux/amd64
     ports:
       - "3001:3000" # host port : api port
+    # depends_on:
+    #   - jaeger
+    environment:
+      - OTEL_EXPORTER_JAEGER_AGENT_HOST=jaeger  # Jaeger's hostname in the same network
+      - OTEL_EXPORTER_JAEGER_AGENT_PORT=6831
     # restart: "no"
+    # networks:
+    #   - api
+  jaeger:
+    image: jaegertracing/all-in-one:1.47
+    container_name: jaeger
+    restart: unless-stopped
+    platform: linux/amd64
+    ports:
+      - "6831:6831/udp"
+      - "16686:16686" # UI port

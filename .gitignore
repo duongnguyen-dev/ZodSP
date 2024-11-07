@@ -2,3 +2,5 @@ models
 .env
 ansible/secrets/*.json
 ansible/inventory
+terraform/*.json
+terraform/*.tfstate
