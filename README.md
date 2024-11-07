@@ -91,7 +91,7 @@ k create ns model-serving
 kubens model-serving
 helm upgrade --install app .
 ```
-
+- This will create 3 pods.
 - Obtain the IP address of nginx-ingress.
 ```bash
 k get ing
@@ -103,7 +103,25 @@ sudo nano /etc/hosts
 ```
 - Then you can access the API UI by `zod.com/docs`
 
-
-
-
-  
+## 3. Deploy monitoring service 
+Using Prometheus and Grafana for monitoring both node and containers (pods). Prometheus will scrape the metrics from both node and containers then display by using Grafana UI. Lastly, the system health alerts will be sent to Discord.
+### How to guide 📖
+- First install Kube-prometheus-stack which will contain every component of monitoring stack. Then deploy on a new namespace called `monitoring`
+``` bash
+helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+k create ns monitoring
+kubens monitoring
+helm install kube-prometheus-stack --namespace monitoring prometheus-community/kube-prometheus-stack
+```
+- Log in to Prometheus UI
+``` bash
+k port-forward -n monitoring svc/kube-prometheus-stack-prometheus 9090:9090
+```
+- Login to Grafana UI
+``` bash
+k port-forward -n monitoring svc/kube-prometheus-stack-grafana 8080:80
+```
+``` bash
+username: admin
+password: prom-operator
+```
