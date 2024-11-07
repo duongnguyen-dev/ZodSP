@@ -1,4 +1,4 @@
-# End-to-end Serving Zero-Shot Object Detection into Google Kubernetes Engine
+# End-to-end Serving Zero-Shot Object Detection Service into Google Kubernetes Engine
 This repo will show you how to deploy your own **Zero-shot Object Detection API onto GKE** using **CI/CD** ⭐⭐⭐
 
 ## System Architecture
