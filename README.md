@@ -190,3 +190,4 @@ Copy the password and you can access Jenkins UI.
 sudo docker restart serving_grounding_dino-jenkins
 ```
 - Add Dockerhub credential to Jenkins at Manage Jenkins/Credentials
+- Set up a connection to GKE by adding the cluster certificate key at Manage Jenkins/Clouds.
