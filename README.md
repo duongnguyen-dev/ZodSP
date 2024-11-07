@@ -125,3 +125,68 @@ k port-forward -n monitoring svc/kube-prometheus-stack-grafana 8080:80
 username: admin
 password: prom-operator
 ```
+## 4. Continuous deployment to GKE using Jenkins pipeline
+Jenkins is deployed on Google Compute Engine using [Ansible](https://docs.ansible.com/ansible/latest).
+
+### How to guide 📖
+
+**NOTE:** Make sure you have installed `miniforge`, you can see the installation [here](https://github.com/conda-forge/miniforge).
+
+Then you can install ansible by running the below command:
+``` bash
+conda create -n [your_desired_env_name] python=3.11
+conda activate [your_desired_env_name]
+pip install ansible
+```
+
+Check if ansible is successfully installed
+``` bash
+ansible --version
+```
+
+**4.1. Set up your instance**
+- Create your `service account`, and select Compute Admin role (Full control of all Compute Engine resources) for your service account.
+- Create new key as json type for your service account. Download this json file and save it in `secrets` directory. Update your project and service_account_file in ansible/deploy_jenkins/create_compute_instance.yaml.
+- In the terminal run the following command lines to create Google Compute Engine:
+```
+cd ansible
+ansible-playbook create_compute_instance.yaml
+```
+- Create ssh key, and select this directory `[YOUR DIR]/.ssh/id_rsa`
+```
+ssh-keygen
+```
+Then run `cat [YOUR DIR]/.ssh/id_rsa.pub` and copy the content.
+- In the Google Computing Engine settings, select Metadata and add your SSH key.
+- Run `cp example.inventory inventory` and replace all value inside the **double single quotes** in the created inventory file.
+
+**4.2. Install Docker and Jenkins in GCE** 
+```
+cd ansible/deploy_jenkins
+ansible-playbook -i ../inventory deploy_jenkins.yaml
+```
+
+**4.3. Connect to Jenkins UI in GCE**
+- Access the instance by using this command
+``` bash
+ssh -i ~/.ssh/id_rsa YOUR_USERNAME@YOUR_EXTERNAL_IP
+```
+- Check if jenkins container is already running ?
+```
+sudo docker ps
+```
+- Open web brower and type [YOUR_EXTERNAL_IP]:8081 for access Jenkins UI. To Unlock Jenkins, please execute the following commands:
+```
+sudo docker exec -ti serving_grounding_dino-jenkins bash
+cat /var/jenkins_home/secrets/initialAdminPassword
+```
+Copy the password and you can access Jenkins UI.
+
+**4.4. Setup Jenkins**
+- Connect to GitHub repo to Jenkins using Webhook
+- Add Github credential to Jenkins (select appropriate scopes for the personal access token)
+- Install the Kubernetes, Docker, Docker Pineline, GCloud SDK Plugins at Manage Jenkins/Plugins. After successful installation, restart the Jenkins container in your Compute Engine instance:
+``` bash
+sudo docker restart serving_grounding_dino-jenkins
+```
+- Add Dockerhub credential to Jenkins at Manage Jenkins/Credentials
