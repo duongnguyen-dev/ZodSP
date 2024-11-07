@@ -18,23 +18,44 @@ from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.trace import set_tracer_provider
-from prometheus_client import start_http_server
+from opentelemetry.exporter.prometheus import PrometheusMetricReader
+from opentelemetry.sdk.metrics import MeterProvider
+from opentelemetry.metrics import set_meter_provider
+from prometheus_client import Counter, Histogram
 
 class ResponseModel(BaseModel):
     response_data: list
 
 model = {}
 
-# Traces using jeager
-trace_provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "serving-grounding-dino"}))
-set_tracer_provider(trace_provider)
+resource = Resource(attributes={SERVICE_NAME: "app"})
+reader = PrometheusMetricReader()
+provider = MeterProvider(resource=resource, metric_readers=[reader])
+set_meter_provider(provider)
+meter = provider.get_meter("object-detection-meter")
 
-jaeger_exporter = JaegerExporter(
-    agent_host_name="jaeger",
-    agent_port=6831, # Jaeger port, not for UI
+request_counter = meter.create_counter(
+    name="object_detection_requests",
+    description="Count of object detection requests"
 )
-span_processor = BatchSpanProcessor(jaeger_exporter) # Manage Jaeger
-trace_provider.add_span_processor(span_processor)
+
+response_histogram = meter.create_histogram(
+    name="object_detection_response_time",
+    description="Histogram of response times for object detection",
+    unit="seconds"
+)
+
+# # Traces using jeager
+# trace_provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "serving-grounding-dino"}))
+# set_tracer_provider(trace_provider)
+
+# jaeger_exporter = JaegerExporter(
+#     agent_host_name="jaeger",
+#     agent_port=6831, # Jaeger port, not for UI
+# )
+# span_processor = BatchSpanProcessor(jaeger_exporter) # Manage Jaeger
+# trace_provider.add_span_processor(span_processor)
+
 
 
 @asynccontextmanager
@@ -46,22 +67,14 @@ async def lifespan(app: FastAPI):
 # FastAPI
 app = FastAPI(lifespan=lifespan)
 
-FastAPIInstrumentor().instrument_app(app)
-RequestsInstrumentor().instrument()
-# security = HTTPBasic()
+# FastAPIInstrumentor().instrument_app(app)
+# RequestsInstrumentor().instrument()
 
-@app.post("/ObjectDetection/detectObject", response_model=list[ObjectDetectionViewModel])
-# async def detectObject(prompt: str, credentials: Annotated[HTTPBasicCredentials, Depends(security)], data: UploadFile = File(...)): 
+@app.post("/detect", response_model=list[ObjectDetectionViewModel])
 async def detectObject(prompt: str, data: UploadFile = File(...)): 
-    # if not (secrets.compare_digest(credentials.username.encode("utf8"), b"duongng2911") and secrets.compare_digest(credentials.password.encode("utf8"), b"hehehihi0808")):
-    #     logger.error("Incorrect email or password")
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZEDm,
-    #         detail="Incorrect email or password",
-    #         headers={"WWW-Authenticate": "Basic"}
-    #     )
-
     start_time = time()
+    labels = {"endpoint": "/detect"}
+
     try:
         image_bytes = await data.read()
         
@@ -73,11 +86,14 @@ async def detectObject(prompt: str, data: UploadFile = File(...)):
 
         result = model["detector"].predict(image, prompt)
         logger.info(f"{result}")
-        logger.info(f"Finished generate response: {time() - start_time:.2f} seconds")
+        elapsed_time = time() - start_time
+        logger.info(f"Finished generate response: {elapsed_time:.2f} seconds")
+
+        # Record metrics
+        request_counter.add(1, labels)
+        response_histogram.record(elapsed_time, labels)
+        
         return result
     except Exception as error:
         logger.error(f"{error}")
-        return {"result" : error}
-
-# if __name__ == "__main__":
-#     uvicorn.run("main:app", port=3000, reload=True)
+        raise HTTPException(status_code=500, detail="Detection failed")

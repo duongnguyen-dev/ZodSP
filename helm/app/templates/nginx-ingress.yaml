@@ -29,7 +29,7 @@ spec:
             name: {{ .Release.Name }}
             port:
               number: 30001
-      - path: /ObjectDetection/detectObject
+      - path: /detect
         pathType: Prefix
         backend:
           service:
