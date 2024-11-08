@@ -21,29 +21,12 @@ from opentelemetry.trace import set_tracer_provider
 from opentelemetry.exporter.prometheus import PrometheusMetricReader
 from opentelemetry.sdk.metrics import MeterProvider
 from opentelemetry.metrics import set_meter_provider
-from prometheus_client import Counter, Histogram
+from prometheus_fastapi_instrumentator import Instrumentator
 
 class ResponseModel(BaseModel):
     response_data: list
 
 model = {}
-
-resource = Resource(attributes={SERVICE_NAME: "app"})
-reader = PrometheusMetricReader()
-provider = MeterProvider(resource=resource, metric_readers=[reader])
-set_meter_provider(provider)
-meter = provider.get_meter("object-detection-meter")
-
-request_counter = meter.create_counter(
-    name="object_detection_requests",
-    description="Count of object detection requests"
-)
-
-response_histogram = meter.create_histogram(
-    name="object_detection_response_time",
-    description="Histogram of response times for object detection",
-    unit="seconds"
-)
 
 # # Traces using jeager
 # trace_provider = TracerProvider(resource=Resource.create({SERVICE_NAME: "serving-grounding-dino"}))
@@ -61,12 +44,12 @@ response_histogram = meter.create_histogram(
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     model["detector"] = ObjectDetectionServices("cpu") 
+    instrumentator = Instrumentator().instrument(app).expose(app, endpoint="/metrics")
     yield
     model.clear()
 
 # FastAPI
 app = FastAPI(lifespan=lifespan)
-
 # FastAPIInstrumentor().instrument_app(app)
 # RequestsInstrumentor().instrument()
 
@@ -90,8 +73,8 @@ async def detectObject(prompt: str, data: UploadFile = File(...)):
         logger.info(f"Finished generate response: {elapsed_time:.2f} seconds")
 
         # Record metrics
-        request_counter.add(1, labels)
-        response_histogram.record(elapsed_time, labels)
+        # request_counter.add(1, labels)
+        # response_histogram.record(elapsed_time, labels)
         
         return result
     except Exception as error:

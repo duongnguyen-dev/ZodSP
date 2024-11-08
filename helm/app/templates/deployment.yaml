@@ -25,3 +25,4 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.deployment.spec.template.spec.containers.ports.containerPort}}
+              name: app-port

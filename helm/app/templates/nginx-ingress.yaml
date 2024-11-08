@@ -8,8 +8,12 @@ metadata:
     # Define ingress type: gce (default), gce-internal, nginx or istio
     # https://cloud.google.com/kubernetes-engine/docs/how-to/load-balance-ingress
     # For istio, please refer to https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
-    # kubernetes.io/ingress.class: "nginx"
-    spec.ingressClassName: "nginx"
+    kubernetes.io/ingress.class: "nginx"
+    # Add prometheus annotations
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "3000"
+    prometheus.io/path: "/metrics"
+    # spec.ingressClassName: "nginx"
 spec:
   rules:
   - host: zod.com
@@ -21,18 +25,25 @@ spec:
           service:
             name: {{ .Release.Name }}
             port:
-              number: 30001
+              number: 3000
       - path: /openapi.json
         pathType: Prefix
         backend:
           service:
             name: {{ .Release.Name }}
             port:
-              number: 30001
+              number: 3000
+      - path: /metrics
+        pathType: Prefix
+        backend:
+          service:
+            name: {{ .Release.Name }}
+            port:
+              number: 3000
       - path: /detect
         pathType: Prefix
         backend:
           service:
             name: {{ .Release.Name }}
             port:
-              number: 30001
+              number: 3000

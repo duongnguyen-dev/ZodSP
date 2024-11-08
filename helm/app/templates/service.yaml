@@ -12,5 +12,5 @@ spec:
     - port: {{ .Values.service.spec.ports.port }}
       protocol: {{ .Values.service.spec.ports.protocol }}
       targetPort: {{ .Values.service.spec.ports.targetPort }}
-      nodePort: {{ .Values.service.spec.ports.nodePort }}
+      name: app-port
   type:  {{ .Values.service.spec.type }}
