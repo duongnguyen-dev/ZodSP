@@ -9,27 +9,16 @@ pipeline {
     }
     
     environment{
-        registry = 'duongnguyen2911/serving_grounding_dino-api'
+        registry = 'duongnguyen2911/zero-shot-object-detection'
         registryCredential = 'dockerhub'      
     }
 
     stages {
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'python:3.10' 
-        //         }
-        //     }
-        //     steps {
-        //         echo 'Testing model correctness..'
-        //         sh 'pip install -r requirements.txt'
-        //     }
-        // }
         stage('Build') {
             steps {
                 script {
                     echo 'Building image for deployment..'
-                    dockerImage = docker.build registry + ":$BUILD_NUMBER" 
+                    dockerImage = docker.build registry + ":latest" 
                     echo 'Pushing image to dockerhub..'
                     docker.withRegistry( '', registryCredential ) {
                         dockerImage.push()
@@ -51,7 +40,7 @@ pipeline {
             steps {
                 echo 'Deploying models..'
                 container('helm') {
-                    sh("helm upgrade --install sgd ./helm/gd_chart --namespace model-serving")
+                    sh("helm upgrade --install app ./helm/app --namespace model-serving")
                 }
             }
         }
