@@ -11,19 +11,11 @@ from fastapi import FastAPI, UploadFile, File, Request, HTTPException
 # from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from services.grounding_dino import ObjectDetectionServices
 from model.object_detection_view_model import ObjectDetectionViewModel
-# from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-# from opentelemetry.instrumentation.requests import RequestsInstrumentor
-# from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-# from opentelemetry.sdk.trace import TracerProvider
-# from opentelemetry.sdk.trace.export import BatchSpanProcessor
-# from opentelemetry.trace import set_tracer_provider
-# from opentelemetry.exporter.prometheus import PrometheusMetricReader
-# from opentelemetry.sdk.metrics import MeterProvider
-# from opentelemetry.metrics import set_meter_provider
 from prometheus_fastapi_instrumentator import Instrumentator
-from prometheus_client import Gauge, Counter, Histogram
+from prometheus_client import Gauge, Counter, Histogram, generate_latest, CONTENT_TYPE_LATEST, REGISTRY
 import psutil
+from starlette.responses import Response
+
 class ResponseModel(BaseModel):
     response_data: list
 
@@ -113,3 +105,8 @@ async def detectObject(prompt: str, data: UploadFile = File(...)):
     except Exception as error:
         logger.error(f"{error}")
         raise HTTPException(status_code=500, detail="Detection failed")
+    
+@app.get("/metrics")
+async def metrics():
+    update_system_metrics()
+    return Response(generate_latest(REGISTRY), media_type=CONTENT_TYPE_LATEST)
