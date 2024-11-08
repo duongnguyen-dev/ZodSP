@@ -154,7 +154,7 @@ ansible-playbook create_compute_instance.yaml
 ```
 - Create ssh key, and select this directory `[YOUR DIR]/.ssh/id_rsa`
 ```
-ssh-keygen
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa
 ```
 Then run `cat [YOUR DIR]/.ssh/id_rsa.pub` and copy the content.
 - In the Google Computing Engine settings, select Metadata and add your SSH key.
