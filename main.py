@@ -7,22 +7,23 @@ from loguru import logger
 # from typing import Annotated
 from contextlib import asynccontextmanager
 from pydantic import BaseModel
-from fastapi import FastAPI, UploadFile, File, Depends, status, HTTPException
+from fastapi import FastAPI, UploadFile, File, Request, HTTPException
 # from fastapi.security import HTTPBasic, HTTPBasicCredentials
 from services.grounding_dino import ObjectDetectionServices
 from model.object_detection_view_model import ObjectDetectionViewModel
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
-from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
-from opentelemetry.instrumentation.requests import RequestsInstrumentor
-from opentelemetry.sdk.resources import SERVICE_NAME, Resource
-from opentelemetry.sdk.trace import TracerProvider
-from opentelemetry.sdk.trace.export import BatchSpanProcessor
-from opentelemetry.trace import set_tracer_provider
-from opentelemetry.exporter.prometheus import PrometheusMetricReader
-from opentelemetry.sdk.metrics import MeterProvider
-from opentelemetry.metrics import set_meter_provider
+# from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+# from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+# from opentelemetry.instrumentation.requests import RequestsInstrumentor
+# from opentelemetry.sdk.resources import SERVICE_NAME, Resource
+# from opentelemetry.sdk.trace import TracerProvider
+# from opentelemetry.sdk.trace.export import BatchSpanProcessor
+# from opentelemetry.trace import set_tracer_provider
+# from opentelemetry.exporter.prometheus import PrometheusMetricReader
+# from opentelemetry.sdk.metrics import MeterProvider
+# from opentelemetry.metrics import set_meter_provider
 from prometheus_fastapi_instrumentator import Instrumentator
-
+from prometheus_client import Gauge, Counter, Histogram
+import psutil
 class ResponseModel(BaseModel):
     response_data: list
 
@@ -52,6 +53,38 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 # FastAPIInstrumentor().instrument_app(app)
 # RequestsInstrumentor().instrument()
+
+# Custom metrics
+REQUEST_COUNT = Counter('http_request_total', 'Total HTTP Requests', ['method', 'status', 'path'])
+REQUEST_LATENCY = Histogram('http_request_duration_seconds', 'HTTP Request Duration', ['method', 'status', 'path'])
+REQUEST_IN_PROGRESS = Gauge('http_requests_in_progress', 'HTTP Requests in progress', ['method', 'path'])
+
+# System metrics
+CPU_USAGE = Gauge('process_cpu_usage', 'Current CPU usage in percent')
+MEMORY_USAGE = Gauge('process_memory_usage_bytes', 'Current memory usage in bytes')
+
+def update_system_metrics():
+    CPU_USAGE.set(psutil.cpu_percent())
+    MEMORY_USAGE.set(psutil.Process().memory_info().rss)
+
+@app.middleware("http")
+async def monitor_requests(request: Request, call_next):
+    method = request.method
+    path = request.url.path
+
+    REQUEST_IN_PROGRESS.labels(method=method, path=path).inc()
+    
+    start_time = time.time()
+    response = await call_next(request)
+    duration = time.time() - start_time
+    
+    status = response.status_code
+    REQUEST_COUNT.labels(method=method, status=status, path=path).inc()
+    REQUEST_LATENCY.labels(method=method, status=status, path=path).observe(duration)
+    REQUEST_IN_PROGRESS.labels(method=method, path=path).dec()
+
+    return response
+
 
 @app.post("/detect", response_model=list[ObjectDetectionViewModel])
 async def detectObject(prompt: str, data: UploadFile = File(...)): 
