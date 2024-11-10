@@ -12,10 +12,6 @@ spec:
       app: {{ .Release.Name }}
   template:
     metadata:
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/metrics"
-        prometheus.io/port: "3000"
       labels:
         app: {{ .Release.Name }}
     spec:
@@ -23,6 +19,13 @@ spec:
         - name: {{ .Release.Name }}
           image: {{ .Values.image.repository }}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
+          env: 
+            - name: ENABLE_METRICS
+              value: "true"
+            - name: METRICS_NAMESPACE
+              value: "fastapi"
+            - name: METRICS_SUBSYSTEM
+              value: ""
           ports:
             - containerPort: {{ .Values.deployment.spec.template.spec.containers.ports.containerPort}}
               name: app-port

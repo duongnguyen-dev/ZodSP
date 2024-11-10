@@ -9,10 +9,6 @@ metadata:
     # https://cloud.google.com/kubernetes-engine/docs/how-to/load-balance-ingress
     # For istio, please refer to https://istio.io/latest/docs/tasks/traffic-management/ingress/kubernetes-ingress/
     kubernetes.io/ingress.class: "nginx"
-    # Add prometheus annotations
-    prometheus.io/scrape: "true"
-    prometheus.io/port: "3000"
-    prometheus.io/path: "/metrics"
     # spec.ingressClassName: "nginx"
 spec:
   rules:
@@ -27,13 +23,6 @@ spec:
             port:
               number: 3000
       - path: /openapi.json
-        pathType: Prefix
-        backend:
-          service:
-            name: {{ .Release.Name }}
-            port:
-              number: 3000
-      - path: /metrics
         pathType: Prefix
         backend:
           service:
