@@ -191,3 +191,20 @@ sudo docker restart serving_grounding_dino-jenkins
 ```
 - Add Dockerhub credential to Jenkins at Manage Jenkins/Credentials
 - Set up a connection to GKE by adding the cluster certificate key at Manage Jenkins/Clouds.
+``` shell
+kubectl create clusterrolebinding model-serving-admin-binding \
+  --clusterrole=admin \
+  --serviceaccount=model-serving:default \
+  --namespace=model-serving
+
+kubectl create clusterrolebinding anonymous-admin-binding \
+  --clusterrole=admin \
+  --user=system:anonymous \
+  --namespace=model-serving
+```
+**4.5. Continuous Deployment**
+- If everything is setup correctly, then the result should look like this
+
+<p align="center">
+  <img src="https://github.com/duongnguyen-dev/serving_grounding_dino/blob/main/assets/continuous_deployment.png" />
+</p>
