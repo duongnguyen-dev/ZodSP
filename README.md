@@ -125,6 +125,14 @@ k port-forward -n monitoring svc/kube-prometheus-stack-grafana 8080:80
 username: admin
 password: prom-operator
 ```
+
+<p align="center">
+  <img src="https://github.com/duongnguyen-dev/zero-shot-object-detection/blob/main/assets/grafana.png" />
+</p>
+<p align="center">
+  <img src="https://github.com/duongnguyen-dev/zero-shot-object-detection/blob/main/assets/grafana_1.png" />
+</p>
+
 ## 4. Continuous deployment to GKE using Jenkins pipeline
 Jenkins is deployed on Google Compute Engine using [Ansible](https://docs.ansible.com/ansible/latest).
 
