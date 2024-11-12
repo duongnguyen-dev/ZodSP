@@ -1,17 +1,32 @@
 import requests
 import cv2
+from argparse import ArgumentParser
+
 
 if __name__ == "__main__":
-    url = 'http://zod.com/detect/'
+    parser = ArgumentParser()
+
+    parser.add_argument(
+        "-u", "--url", type=str, default="http://zod.com/detect/", help="The url path to your api."
+    )
+    parser.add_argument(
+        "-p", "--prompt", type=str, default="car", help="The prompt to detect your desired object."
+    )
+    parser.add_argument(
+        "-i", "--image", type=str, default="assets/test_2.jpeg", help="Path to your test image."
+    )
+
+    args = parser.parse_args()
+
     headers = {
         'Content-Type': 'application/json',
         # Add other headers if required (e.g., 'Authorization': 'Bearer YOUR_TOKEN')
     }
 
-    data = {"prompt": "car"}
-    file = {"data" : open("assets/test_2.jpeg", "rb")}
+    data = {"prompt": args.prompt}
+    file = {"data" : open(args.image, "rb")}
         
-    response = requests.post(url, params=data, files=file)
+    response = requests.post(args.url, params=data, files=file)
 
     if response.status_code == 200:
         print("Success:", response.json())
