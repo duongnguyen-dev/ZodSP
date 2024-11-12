@@ -27,9 +27,9 @@ This repo will show you how to deploy your own **Zero-shot Object Detection API 
    
 ## 1. Create GKE Cluster using Terraform
 ### How to guide 📖
-**1.1. Create a [project](https://console.cloud.google.com/projectcreate)**
+#### 1.1. Create a [project](https://console.cloud.google.com/projectcreate)
 
-**1.2. Install Cloud CLI**
+#### 1.2. Install Cloud CLI**
 - Gcloud CLI can be installed following this document:
   - For mac: https://cloud.google.com/sdk/docs/install#mac
   - For ubuntu: https://cloud.google.com/sdk/docs/install#deb
@@ -44,20 +44,20 @@ Y
 gcloud -v
 ```
 
-**1.3. Install gke-cloud-auth-plugin**
+#### 1.3. Install gke-cloud-auth-plugin
 ``` bash
 gcloud components install gke-gcloud-auth-plugin
 ```
-**1.4. Create service account**
+#### 1.4. Create service account
 - Create your [service account](https://console.cloud.google.com/iam-admin/serviceaccounts), and select `Kubernetes Engine Admin` role therefore you will have full management of Kubernetes Cluster and their Kubernetes API object for your service account.
 - Create new key as json type for your service account. Download this json file and save it in terraform directory. Update `credentials` in `terraform/main.tf` with your json directory.
 
-**1.5. Add permission for the project**
+#### 1.5. Add permission for the project
 - Go to [IAM](https://console.cloud.google.com/iam-admin/iam), click on `GRANT ACCESS`, then add new principals, this principal is your service account created in step 1.3. Finally, select `Owner` role.
 
-**1.6. Installing [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)**
+#### 1.6. Installing [Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
 
-**1.7. Using Terraform to create GKE cluster**
+#### 1.7. Using Terraform to create GKE cluster
 - Change the default value of variable `project_id` in `terraform/variables.tf` with your project id on Google Cloud. Then run the following command to create GKE cluster:
 ``` bash
 gcloud auth application-default login
@@ -71,7 +71,7 @@ terraform apply
 - After you run these command lines, you will see the GKE cluster is deployed at **asia-southeast1** with its node machine type is: **e2-standard-2 (2 vCPU, 1 core, 8 GB RAM and costs $144.35/1month)**. You can change these settings in `terraform/variables.tf` to your desired setting.
 - Remember not to set `enable_autopilot=true` in `terraform/main.tf` as Prometheus service cannot scrape node metrics from Autopilot cluster.
 
-**1.8. Connect to GKE cluster**
+#### 1.8. Connect to GKE cluster
 - After the cluster was created successfully, click on your cluster and select **Connect** button. Then copy and paste the **Command-line access** into you terminal.
 - You can check the connection by using this command
 ``` bash
@@ -82,7 +82,7 @@ k get nodes
 Using Helm Chart to deploy the application on GKE. See the installation [here](https://helm.sh/docs/topics/charts/).
 ### How to guide 📖
 
-**2.1. Deploy Nginx Ingress controller**
+#### 2.1. Deploy Nginx Ingress controller
 ``` bash
 cd helm/nginx-ingress
 k create ns nginx-ingress
