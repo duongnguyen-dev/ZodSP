@@ -6,6 +6,11 @@ This repo will show you how to deploy your own **Zero-shot Object Detection API 
   <img src="https://github.com/duongnguyen-dev/serving_grounding_dino/blob/main/assets/system_architecture.png" />
 </p>
 
+## TODO: 
+- [ ] Setup alert service
+- [ ] Distributed tracing using Jaeger and Opentelemetry
+- [ ] Logs management 
+
 # Table of content
 1. [Create GKE Cluster using Terraform](#1-create-gke-cluster-using-terraform)
 2. [Deploy serving service manually](#2-deploy-serving-service)
