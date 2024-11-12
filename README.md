@@ -14,15 +14,15 @@ This repo will show you how to deploy your own **Zero-shot Object Detection API 
 # Table of content
 1. [Create GKE Cluster using Terraform](#1-create-gke-cluster-using-terraform)
 2. [Deploy serving service manually](#2-deploy-serving-service)
-    1. [Deploy Nginx Ingress Controller](#2.1-deploy-nginx-ingress-controller)
-    2. [Deploy API](#2.2-deploy-api)
+    1. [Deploy Nginx Ingress Controller](#21-deploy-nginx-ingress-controller)
+    2. [Deploy API](#22-deploy-api)
 3. [Deploy monitoring service](#3-deploy-monitoring-service)
 4. [Continuous deployment to GKE using Jenkins pipeline](#4-continuous-deployment-to-gke-using-jenkins-pipeline)
-    1. [Create Google Compute Engine](#4.1-set-up-your-instance)
-    2. [Install Docker and Jenkins in GCE](#4.2-install-docker-and-jenkins)
-    3. [Connect to Jenkins UI in GCE](#4.3-connect-to-jenkins-ui-in-compute-engine)
-    4. [Setup Jenkins](#4.4-setup-jenkins)
-    5. [Continuous deployment](#4.5-continuous-deployment)
+    1. [Create Google Compute Engine](#41-set-up-your-instance)
+    2. [Install Docker and Jenkins in GCE](#42-install-docker-and-jenkins)
+    3. [Connect to Jenkins UI in GCE](#43-connect-to-jenkins-ui-in-compute-engine)
+    4. [Setup Jenkins](#44-setup-jenkins)
+    5. [Continuous deployment](#45-continuous-deployment)
 5. [API result](#5-api-result)
    
 ## 1. Create GKE Cluster using Terraform
@@ -90,7 +90,7 @@ kubens nginx-ingress
 helm upgrade --install nginx-ingress-controller .
 ```
 
-**2.2. Deploy API**
+#### 2.2. Deploy API
 ``` bash
 cd helm/app
 k create ns model-serving
@@ -158,7 +158,7 @@ Check if ansible is successfully installed
 ansible --version
 ```
 
-**4.1. Set up your instance**
+#### 4.1. Set up your instance
 - Create your `service account`, and select Compute Admin role (Full control of all Compute Engine resources) for your service account.
 - Create new key as json type for your service account. Download this json file and save it in `secrets` directory. Update your project and service_account_file in ansible/deploy_jenkins/create_compute_instance.yaml.
 - In the terminal run the following command lines to create Google Compute Engine:
@@ -174,13 +174,13 @@ Then run `cat [YOUR DIR]/.ssh/id_rsa.pub` and copy the content.
 - In the Google Computing Engine settings, select Metadata and add your SSH key.
 - Run `cp example.inventory inventory` and replace all value inside the **double single quotes** in the created inventory file.
 
-**4.2. Install Docker and Jenkins in GCE** 
+#### 4.2. Install Docker and Jenkins in GCE
 ```
 cd ansible/deploy_jenkins
 ansible-playbook -i ../inventory deploy_jenkins.yaml
 ```
 
-**4.3. Connect to Jenkins UI in GCE**
+#### 4.3. Connect to Jenkins UI in GCE
 - Access the instance by using this command
 ``` bash
 ssh -i ~/.ssh/id_rsa YOUR_USERNAME@YOUR_EXTERNAL_IP
@@ -196,7 +196,7 @@ cat /var/jenkins_home/secrets/initialAdminPassword
 ```
 Copy the password and you can access Jenkins UI.
 
-**4.4. Setup Jenkins**
+#### 4.4. Setup Jenkins
 - Connect to GitHub repo to Jenkins using Webhook
 - Add Github credential to Jenkins (select appropriate scopes for the personal access token)
 - Install the Kubernetes, Docker, Docker Pineline, GCloud SDK Plugins at Manage Jenkins/Plugins. After successful installation, restart the Jenkins container in your Compute Engine instance:
@@ -216,7 +216,7 @@ kubectl create clusterrolebinding anonymous-admin-binding \
   --user=system:anonymous \
   --namespace=model-serving
 ```
-**4.5. Continuous Deployment**
+#### 4.5. Continuous Deployment
 - If everything is setup correctly, then the result should look like this
 
 <p align="center">
